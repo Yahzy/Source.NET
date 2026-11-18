@@ -22,7 +22,7 @@ import threading
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
+REPO = os.path.abspath(os.environ.get("PLAYTEST_REPO") or os.path.join(HERE, "..", ".."))
 AUTORUN_NAME = "zz_playtest.lua"
 
 EXCEPTION_RE = re.compile(r"\b((?:[A-Za-z_][\w`]*\.)*[A-Za-z_]\w*Exception)\b(?::\s*(.*))?")
