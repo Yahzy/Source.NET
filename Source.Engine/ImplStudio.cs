@@ -686,7 +686,8 @@ public class ModelRender : IModelRender
 
 		bool bVertexLit = (pInfo.Model.Flags & ModelFlag.VertexLit) != 0;
 
-		bool bNeedsEnvCubemap = r_showenvcubemap.GetInt() != 0 || (pInfo.Model.Flags & ModelFlag.UsesEnvCubemap) != 0;
+		bool bNeedsEnvCubemap = r_showenvcubemap.GetInt() != 0 || (pInfo.Model.Flags & ModelFlag.UsesEnvCubemap) != 0 ||
+			(ForcedMaterial != null && ForcedMaterial.UsesEnvCubemap());
 
 		// todo: r_drawmodellightorigin
 
@@ -1055,6 +1056,12 @@ public class ModelRender : IModelRender
 	bool EngineLightingSuppressed = false;
 
 	public void SuppressEngineLighting(bool suppress) => EngineLightingSuppressed = suppress;
+	// Tracked so a forced material that samples env_cubemap gets the model's local cubemap bound
+	IMaterial? ForcedMaterial;
+	public void ForcedMaterialOverride(IMaterial? newMaterial, OverrideType overrideType = OverrideType.Normal) {
+		ForcedMaterial = overrideType == OverrideType.Normal ? newMaterial : null;
+		StudioRender.ForcedMaterialOverride(newMaterial, overrideType);
+	}
 
 	LightingState ActualLightingState;
 	readonly BSPDWorldLight[] WorldLights = new BSPDWorldLight[Render.MAXLOCALLIGHTS];

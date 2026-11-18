@@ -1683,9 +1683,15 @@ public unsafe class StudioRender
 			pMaterial.AlphaModulate(pRC.AlphaMod);
 			pMaterial.ColorModulate(pRC.ColorMod.X, pRC.ColorMod.Y, pRC.ColorMod.Z);
 		}
+		else if (pRC.ForcedMaterialType == OverrideType.Normal) {
+			materialFlags = 0;
+			pMaterial = pRC.ForcedMaterial;
+
+			pMaterial.AlphaModulate(pRC.AlphaMod);
+			pMaterial.ColorModulate(pRC.ColorMod.X, pRC.ColorMod.Y, pRC.ColorMod.Z);
+		}
 		else {
-			// TODO!!
-			Assert(false);
+			// TODO: shadow build, depth write and selective overrides
 			return null;
 		}
 

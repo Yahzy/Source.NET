@@ -872,6 +872,7 @@ public partial class C_BaseEntity : IClientEntity
 	[NetworkVar("m_OverrideMaterial")]
 	public ushort OverrideMaterial;
 	IMaterial? MaterialOverridePointer;
+	ushort LastNetworkedOverrideMaterial;
 
 	public virtual void SetMaterialOverride(ReadOnlySpan<char> name) {
 		if (name.IsEmpty || name[0] == '\0') {
@@ -892,6 +893,7 @@ public partial class C_BaseEntity : IClientEntity
 	}
 
 	public virtual ReadOnlySpan<char> GetMaterialOverride() => NetworkString.Convert(OverrideMaterial) ?? "";
+	public IMaterial? GetMaterialOverridePointer() => MaterialOverridePointer;
 	[NetworkVar("m_OverrideSubMaterials")]
 	public InlineArray32<ushort> OverrideSubMaterials;
 	InlineArray32<IMaterial?> SubMaterialOverridePointers;
@@ -2244,6 +2246,11 @@ public partial class C_BaseEntity : IClientEntity
 	public virtual void OnDataChanged(DataUpdateType updateType) {
 		CheckInitPredictable("OnDataChanged");
 		CreateShadow();
+
+		if (OverrideMaterial != LastNetworkedOverrideMaterial) {
+			LastNetworkedOverrideMaterial = OverrideMaterial;
+			SetMaterialOverride(GetMaterialOverride());
+		}
 
 		if (updateType == DataUpdateType.Created)
 			UpdateVisibility();

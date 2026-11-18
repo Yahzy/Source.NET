@@ -1698,10 +1698,18 @@ public partial class C_BaseAnimating : C_BaseEntity, IModelLoadCallback
 			}
 		}
 
+		// Entity:SetMaterial, not applied to depth-only passes
+		Source.Common.MaterialSystem.IMaterial? overrideMaterial = (info.Flags & (StudioFlags.ShadowDepthTexture | StudioFlags.SSAODepthTexture)) == 0 ? GetMaterialOverridePointer() : null;
+		if (overrideMaterial != null)
+			modelrender.ForcedMaterialOverride(overrideMaterial);
+
 		if (markAsDrawn && (info.Flags & StudioFlags.Render) != 0)
 			DoInternalDrawModel(ref info, ref state, boneToWorld);
 		else
 			DoInternalDrawModel(ref info, ref Unsafe.NullRef<DrawModelState>(), boneToWorld);
+
+		if (overrideMaterial != null)
+			modelrender.ForcedMaterialOverride(null);
 
 		OnPostInternalDrawModel(ref info);
 
