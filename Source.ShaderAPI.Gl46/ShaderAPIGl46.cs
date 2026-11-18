@@ -2909,6 +2909,58 @@ public class ShaderAPIGl46 : IShaderAPI, IShaderDevice, IDebugTextureInfo
 			glToggle(GL_FRAMEBUFFER_SRGB, true);
 	}
 
+	ShaderAPITextureHandle_t FrameBufferDepthTexture = INVALID_SHADERAPI_TEXTURE_HANDLE;
+	int FrameBufferDepthWidth, FrameBufferDepthHeight;
+
+	public void CopyRenderTargetDepthToTexture() {
+		FlushBufferedPrimitives();
+
+		int width, height;
+		if (UsingTextureRenderTarget) {
+			width = ViewportMaxWidth;
+			height = ViewportMaxHeight;
+		}
+		else
+			GetBackBufferDimensions(out width, out height);
+
+		if (width <= 0 || height <= 0)
+			return;
+
+		if (FrameBufferDepthTexture == INVALID_SHADERAPI_TEXTURE_HANDLE || FrameBufferDepthWidth != width || FrameBufferDepthHeight != height) {
+			if (FrameBufferDepthTexture != INVALID_SHADERAPI_TEXTURE_HANDLE)
+				DeleteTexture(FrameBufferDepthTexture);
+
+			FrameBufferDepthTexture = CreateDepthTexture(ImageFormat.NV_DST24, width, height, "_rt_FrameBufferDepth", true);
+			FrameBufferDepthWidth = width;
+			FrameBufferDepthHeight = height;
+
+			uint glTex = GetGL46Texture(FrameBufferDepthTexture);
+			glTextureParameteri(glTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTextureParameteri(glTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTextureParameteri(glTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(glTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(glTex, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+		}
+
+		// Depth blits can't flip or scale (and the backbuffer is multisampled), so the copy keeps
+		// the source orientation; shaders sampling it must account for that themselves.
+		glNamedFramebufferTexture(copyFBO, GL_DEPTH_STENCIL_ATTACHMENT, GetGL46Texture(FrameBufferDepthTexture), 0);
+		glBlitNamedFramebuffer(UsingTextureRenderTarget ? renderFBO : 0, copyFBO,
+			0, 0, width, height,
+			0, 0, width, height,
+			GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glNamedFramebufferTexture(copyFBO, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);
+	}
+
+	public void BindFrameBufferDepthTexture(Sampler sampler) {
+		if (FrameBufferDepthTexture == INVALID_SHADERAPI_TEXTURE_HANDLE)
+			return;
+
+		// The handle can be recycled when the depth texture gets resized, so always rebind.
+		LastBoundTextures[(int)sampler] = INVALID_SHADERAPI_TEXTURE_HANDLE;
+		BindTexture(sampler, FrameBufferDepthTexture);
+	}
+
 	public IMesh CreateStaticMesh(VertexFormat format, ReadOnlySpan<char> textureGroup, IMaterial? material) {
 		return MeshMgr.CreateStaticMesh(format, textureGroup, material);
 	}

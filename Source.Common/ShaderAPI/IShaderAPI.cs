@@ -110,6 +110,10 @@ public interface IShaderAPI : IShaderDynamicAPI
 
 	void CopyRenderTargetToTexture(ShaderAPITextureHandle_t textureHandle);
 
+	// Snapshots the current render target's depth buffer so it can be sampled via StandardTextureId.FrameBufferFullDepth
+	void CopyRenderTargetDepthToTexture();
+	void BindFrameBufferDepthTexture(Sampler sampler);
+
 	// Binds a particular material to render with
 	void Bind(IMaterial material);
 

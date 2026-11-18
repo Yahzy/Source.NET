@@ -434,6 +434,8 @@ public class ViewRender : IViewRender
 
 		render.SceneEnd();
 
+		ViewSSAO.Render(in viewRender);
+
 		RenderPlayerSprites();
 
 		DrawViewModels(in viewRender, (whatToDraw & RenderViewInfo.DrawViewmodel) != 0);

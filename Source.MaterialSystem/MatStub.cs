@@ -523,6 +523,7 @@ public class DummyMaterialSystem : IMaterialSystemStub, IShaderUtil, IMatRenderC
 	public void SetLight(int lightNum, in LightDesc desc) { }
 	public void SetAmbientLightCube(Span<Vector4> cube) { }
 	public void CopyRenderTargetToTexture(ITexture? texture) { }
+	public void CopyRenderTargetDepthToTexture() { }
 	public void SetFrameBufferCopyTexture(ITexture? texture, int textureIndex = 0) { }
 	public ITexture? GetFrameBufferCopyTexture(int textureIndex) => g_DummyTexture;
 	public void MatrixMode(MaterialMatrixMode matrixMode) { }

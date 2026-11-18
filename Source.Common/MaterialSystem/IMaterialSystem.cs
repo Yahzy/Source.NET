@@ -892,6 +892,8 @@ public interface IMatRenderContext : IRefCounted
 
 	// Blit the backbuffer to the framebuffer texture
 	void CopyRenderTargetToTexture(ITexture? texture);
+	// Snapshot the current render target's depth buffer, bound through StandardTextureId.FrameBufferFullDepth
+	void CopyRenderTargetDepthToTexture();
 
 	// Set the current texture that is a copy of the framebuffer.
 	void SetFrameBufferCopyTexture(ITexture? texture, int textureIndex = 0);
@@ -1411,6 +1413,10 @@ public readonly ref struct MatRenderContextPtr : IDisposable
 
 	public void CopyRenderTargetToTexture(ITexture? texture) {
 		Context.CopyRenderTargetToTexture(texture);
+	}
+
+	public void CopyRenderTargetDepthToTexture() {
+		Context.CopyRenderTargetDepthToTexture();
 	}
 
 	public void CopyRenderTargetToTextureEx(ITexture? texture, int renderTargetID, ref System.Drawing.Rectangle pSrcRect, ref System.Drawing.Rectangle pDstRect) {

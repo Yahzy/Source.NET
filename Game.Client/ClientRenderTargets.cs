@@ -59,5 +59,12 @@ public class ClientRenderTargets : BaseClientRenderTargets
 		RenderTexture.GetMorphTex1();
 		RenderTexture.GetSuperFPTex2(hardwareConfig);
 		RenderTexture.GetSuperFPTex(hardwareConfig);
+
+		ViewSSAO.InitRenderTargets(materialSystem);
+	}
+
+	public override void ShutdownClientRenderTargets() {
+		ViewSSAO.ShutdownRenderTargets();
+		base.ShutdownClientRenderTargets();
 	}
 }

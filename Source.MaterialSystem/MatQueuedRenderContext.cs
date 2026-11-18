@@ -278,6 +278,8 @@ public sealed unsafe class MatQueuedRenderContext : MatRenderContextBase, IMatRe
 		}, (H, Cube: copy));
 	}
 
+	public void CopyRenderTargetDepthToTexture() => Queue.QueueCall(static h => h.CopyRenderTargetDepthToTexture(), H);
+
 	public void CopyRenderTargetToTexture(ITexture? texture) => Queue.QueueCall(static s => s.H.CopyRenderTargetToTexture(s.Texture!), (H, Texture: texture));
 
 	public override void SetFrameBufferCopyTexture(ITexture? texture, int textureIndex = 0) {

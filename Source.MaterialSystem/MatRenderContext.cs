@@ -438,6 +438,11 @@ public class MatRenderContext : MatRenderContextBase, IMatRenderContextInternal
 		}
 	}
 
+	public void CopyRenderTargetDepthToTexture() {
+		Flush(false);
+		shaderAPI.CopyRenderTargetDepthToTexture();
+	}
+
 	public void CopyRenderTargetToTexture(ITexture texture) => CopyRenderTargetToTextureEx(texture, 0, ref Unsafe.NullRef<System.Drawing.Rectangle>(), ref Unsafe.NullRef<System.Drawing.Rectangle>());
 
 	public void CopyRenderTargetToTextureEx(ITexture? texture, int renderTargetID, ref System.Drawing.Rectangle srcRect, ref System.Drawing.Rectangle dstRect) {
@@ -506,6 +511,7 @@ public class MatRenderContext : MatRenderContextBase, IMatRenderContextInternal
 						((ITextureInternal)CurrentFrameBufferCopyTexture[textureIndex]!).Bind(sampler);
 				}
 				break;
+			case StandardTextureId.FrameBufferFullDepth: shaderAPI.BindFrameBufferDepthTexture(sampler); break;
 			default: Assert(false); break;
 		}
 	}
