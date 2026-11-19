@@ -79,6 +79,15 @@ public partial class C_BaseCombatWeapon : C_BaseAnimating
 		JustRestored = false;
 	}
 
+	// The world model is only used in third person, and the visibility depends on it too.
+	public void UpdateViewModeVisibility() {
+		int overrideModelIndex = CalcOverrideModelIndex();
+		if (overrideModelIndex != -1 && overrideModelIndex != GetModelIndex())
+			SetModelIndex(overrideModelIndex);
+
+		UpdateVisibility();
+	}
+
 	public virtual int GetWorldModelIndex() {
 		if (g_pGameRules != null) {
 			ReadOnlySpan<char> baseName = modelinfo.GetModelName(modelinfo.GetModel(WorldModelIndex));

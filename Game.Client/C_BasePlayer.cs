@@ -348,6 +348,14 @@ public partial class C_BasePlayer : C_BaseCombatCharacter, IGameEventListener2
 			Flashlight();
 
 			UpdateFogController();
+
+			// The view can go from first to third person without the thirdperson commands (view entity, ShouldDrawLocalPlayer hook),
+			// so check for it every frame and update what depends on it like a thirdperson switch.
+			bool shouldDrawLocalPlayer = ShouldDrawLocalPlayer();
+			if (shouldDrawLocalPlayer != DrewLocalPlayer) {
+				DrewLocalPlayer = shouldDrawLocalPlayer;
+				ThirdPersonSwitch(shouldDrawLocalPlayer);
+			}
 		}
 		else {
 			// todo
@@ -867,6 +875,7 @@ public partial class C_BasePlayer : C_BaseCombatCharacter, IGameEventListener2
 	public int CurrentCommandNumber() => CurrentCommand.Get().CommandNumber;
 
 	bool PlayerUnderwater;
+	bool DrewLocalPlayer;
 	private bool IsPlayerUnderwater() => PlayerUnderwater;
 
 	internal void ThirdPersonSwitch(bool thirdperson) {
@@ -884,5 +893,8 @@ public partial class C_BasePlayer : C_BaseCombatCharacter, IGameEventListener2
 			// 	}
 			// }
 		}
+
+		// Update our weapon's visibility when we switch
+		GetActiveWeapon()?.UpdateViewModeVisibility();
 	}
 }
