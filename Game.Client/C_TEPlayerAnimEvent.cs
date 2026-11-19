@@ -20,4 +20,10 @@ public partial class C_TEPlayerAnimEvent : C_BaseTempEntity
 	public readonly int Event;
 	[NetworkVar("m_nData")]
 	public readonly int Data;
+
+	public override void PostDataUpdate(DataUpdateType updateType) {
+		// Create the effect.
+		if (Player.Get() is HL2MP_Player player && !player.IsDormant())
+			player.DoAnimationEvent((PlayerAnimEvent)Event, Data, false);
+	}
 }

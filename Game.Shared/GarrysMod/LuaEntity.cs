@@ -1942,10 +1942,7 @@ public static partial class LuaEntity
 			return 0;
 		int anim = (int)Math.Clamp((float)(int)lua.CheckNumber(2), 0, 9);
 		HL2MP_Player? player = ent as HL2MP_Player;
-		if (anim == (int)PlayerAnim.Attack1)
-			player!.DoAnimationEvent(PlayerAnimEvent.AttackPrimary, 0, true);
-		else if (anim == (int)PlayerAnim.Reload)
-			player!.DoAnimationEvent(PlayerAnimEvent.Reload, 0, true);
+		player!.SetAnimation((PlayerAnim)anim);
 		return 0;
 	}
 
