@@ -136,7 +136,22 @@ public partial class C_HL2MP_Player : C_BaseHLPlayer
 		AngEyeAngles = EyeAngles();
 	}
 
-	public void DoAnimationEvent(PlayerAnimEvent evt, int data, bool predicted) => PlayerAnimState.DoAnimationEvent(evt, data);
+	public void DoAnimationEvent(PlayerAnimEvent evt, int data, bool predicted) {
+		// The local player plays its own events while predicting, only do it the first time a command is predicted.
+		if (IsLocalPlayer() && prediction.InPrediction() && !prediction.IsFirstTimePredicted())
+			return;
+
+		PlayerAnimState.DoAnimationEvent(evt, data);
+	}
+
+#if GMOD_DLL
+	public override void SetAnimation(PlayerAnim playerAnim) {
+		if (playerAnim == PlayerAnim.Attack1)
+			DoAnimationEvent(PlayerAnimEvent.AttackPrimary, 0, true);
+		else if (playerAnim == PlayerAnim.Reload)
+			DoAnimationEvent(PlayerAnimEvent.Reload, 0, true);
+	}
+#endif
 
 #if GMOD_DLL
 	int IDEntIndex;

@@ -416,6 +416,14 @@ public partial class HL2MP_Player : HL2_Player
 		return actToTranslate;
 	}
 
+#if GMOD_DLL
+	public override void SetAnimation(PlayerAnim playerAnim) {
+		if (playerAnim == PlayerAnim.Attack1)
+			DoAnimationEvent(PlayerAnimEvent.AttackPrimary, 0, true);
+		else if (playerAnim == PlayerAnim.Reload)
+			DoAnimationEvent(PlayerAnimEvent.Reload, 0, true);
+	}
+#else
 	public override void SetAnimation(PlayerAnim playerAnim) {
 		int animDesired;
 		float speed = GetAbsVelocity().Length();
@@ -503,6 +511,7 @@ public partial class HL2MP_Player : HL2_Player
 		ResetSequence(animDesired);
 		SetCycle(0);
 	}
+#endif
 
 	public override bool BumpWeapon(BaseCombatWeapon weapon) {
 		BaseCombatCharacter? owner = weapon.GetOwner();
