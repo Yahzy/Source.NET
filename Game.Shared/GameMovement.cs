@@ -2494,6 +2494,9 @@ public class GameMovement : IGameMovement
 
 				// The player is in duck transition and not duck-jumping.
 				if (Player.Local.Ducking && !bDuckJump && !bDuckJumpTime) {
+					if ((Player.GetFlags() & EntityFlags.AnimDucking) == 0)
+						Player.AddFlag(EntityFlags.AnimDucking);
+
 					float flDuckMilliseconds = Math.Max(0.0f, GAMEMOVEMENT_DUCK_TIME - (float)Player.Local.DuckTime);
 					float flDuckSeconds = flDuckMilliseconds * 0.001f;
 
@@ -2572,6 +2575,9 @@ public class GameMovement : IGameMovement
 					if (CanUnduck()) {
 						// or unducking
 						if ((Player.Local.Ducking || Player.Local.Ducked)) {
+							if ((Player.GetFlags() & EntityFlags.AnimDucking) != 0)
+								Player.RemoveFlag(EntityFlags.AnimDucking);
+
 							float flDuckMilliseconds = Math.Max(0.0f, GAMEMOVEMENT_DUCK_TIME - (float)Player.Local.DuckTime);
 							float flDuckSeconds = flDuckMilliseconds * 0.001f;
 
@@ -2777,7 +2783,7 @@ public class GameMovement : IGameMovement
 		return false;
 	}
 	protected void StartUnDuckJump() {
-		Player.AddFlag(EntityFlags.Ducking);
+		Player.AddFlag(EntityFlags.Ducking | EntityFlags.AnimDucking);
 		Player.Local.Ducked = true;
 		Player.Local.Ducking = false;
 
@@ -2809,7 +2815,7 @@ public class GameMovement : IGameMovement
 		viewDelta.Z *= trace.Fraction;
 		flDeltaZ -= viewDelta.Z;
 
-		Player.RemoveFlag(EntityFlags.Ducking);
+		Player.RemoveFlag(EntityFlags.Ducking | EntityFlags.AnimDucking);
 		Player.Local.Ducked = false;
 		Player.Local.Ducking = false;
 		Player.Local.InDuckJump = false;
